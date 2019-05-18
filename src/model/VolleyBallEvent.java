@@ -14,6 +14,7 @@ public class VolleyBallEvent {
 	
 	private Participant root;
 	private Participant first;
+	private Participant oficialRoot;
 	
 	public static final String PATH = "data/data.csv";
 	
@@ -21,11 +22,12 @@ public class VolleyBallEvent {
 		
 	}
 	
-	public void addParticipantIntoTree(Participant part) {
-		addParticipantIntoTree(part, root);
+	//Spectators methods
+	public void addParticipantIntoTree(Participant p) {
+		addParticipantIntoTree(p, root);
 	}
 	
-	public void addParticipantIntoTree(Participant part, Participant current) {
+	private void addParticipantIntoTree(Participant part, Participant current) {
 		if(root == null) {
 			root = part;
 		}
@@ -54,15 +56,13 @@ public class VolleyBallEvent {
 		String line = br.readLine();
 		line = br.readLine();
 		while(line != null){
-			String[] temporalDataArray = line.split(",");
-			
-			URL url = new URL(temporalDataArray[6]);
+			String[] parts = line.split(",");
+			URL url = new URL(parts[6]);
 			URLConnection conn = url.openConnection();
 			InputStream in = conn.getInputStream();
-			Image img = new Image(in);
-			
-			Participant temporalNewParticipant = new Participant(Integer.parseInt(temporalDataArray[0]),temporalDataArray[1],temporalDataArray[2],temporalDataArray[3],temporalDataArray[4],temporalDataArray[5],img,temporalDataArray[7]);
-			addParticipantIntoTree(temporalNewParticipant);
+			Image img = new Image(in);	
+			Participant nParticipant = new Participant(Integer.parseInt(parts[0]),parts[1],parts[2],parts[3],parts[4],parts[5],img,parts[7]);
+			addParticipantIntoTree(nParticipant);
 			line = br.readLine();
 		}
 		fileReader.close();
@@ -71,23 +71,24 @@ public class VolleyBallEvent {
 		return PATH;
 	}
 	
-	public Participant searchParticipant(int id) {
+	public Participant searchSpectador(int id) {
 		Participant s= new Participant(id,"","","","","",null,"");
-		return searchParticipant(root,s);
+		return searchSpectador(root,s);
 	}
-	private Participant searchParticipant(Participant current, Participant s) {
+	
+	private Participant searchSpectador(Participant current, Participant s) {
 		if(current!=null) {
 			if(s.compareTo(current)<0) {
 				if(current.getLeft()!=null){
-					return searchParticipant(current.getLeft(),s);
+					return searchSpectador(current.getLeft(),s);
 				}else {
-					return searchParticipant(current.getRigth(), s);
+					return searchSpectador(current.getRigth(), s);
 				}
 			}else if(s.compareTo(current)>0){
 				if(current.getRigth()!=null) {
-					return searchParticipant(current.getRigth(), s);
+					return searchSpectador(current.getRigth(), s);
 				}else {
-					return searchParticipant(current.getLeft(), s);
+					return searchSpectador(current.getLeft(), s);
 				}
 			}else {
 				return current;
@@ -96,12 +97,87 @@ public class VolleyBallEvent {
 		return current;
 	}
 	
-	public Participant searchSpectator(int id) {
-		Participant result = root;
-		
-		return result;
+	
+	//Official participants methods
+	public void choiceAleatoryParticipants() {
+		for(int i=0;i<75;i++) {
+			int n=(int) (Math.random() * 150) + 1;
+			addingOficialParticipants(searchSpectador(n));
+		}
 	}
 	
+	public void addingOficialParticipants(Participant newOne){
+		if(first == null){
+			first = newOne;
+		}else{
+			Participant current = first;
+			while(current.getNext() != null){
+				current = current.getNext();
+			}
+			current.setNext(newOne);
+			Participant temp = current;
+			current = current.getNext();
+			current.setPrev(temp);
+		}
+	}
+	
+	public void oficialParticipantsTree(Participant p) {
+		while(first!=null) {
+			oficialParticipantsTree(first,oficialRoot);
+			first.getNext();
+		}
+		
+	}
+	
+	private void oficialParticipantsTree(Participant p, Participant current) {
+		if(oficialRoot == null) {
+			oficialRoot = p;
+		}
+		else {
+			if(p.compareTo(current) <= 0) {
+				if(current.getLeft() == null) {
+					current.setLeft(p);
+				}else{
+					addParticipantIntoTree(p, current.getLeft());
+				}
+			} else{
+				if(current.getRigth() == null) {
+					current.setRigth(p);
+				} else {
+					addParticipantIntoTree(p, current.getRigth());
+				}
+			}
+			
+		}
+	}
+	
+    public Participant searchOficialParticipant(int id) {
+		Participant s= new Participant(id,"","","","","",null,"");
+		return searchOficialPartcipant(oficialRoot,s);
+    }
+	
+    private Participant searchOficialPartcipant(Participant current, Participant s) {
+		if(current!=null) {
+			if(s.compareTo(current)<0) {
+				if(current.getLeft()!=null){
+					return searchSpectador(current.getLeft(),s);
+				}else {
+					return searchSpectador(current.getRigth(), s);
+				}
+			}else if(s.compareTo(current)>0){
+				if(current.getRigth()!=null) {
+					return searchSpectador(current.getRigth(), s);
+				}else {
+					return searchSpectador(current.getLeft(), s);
+				}
+			}else {
+				return current;
+			}
+		}
+		return current;
+	}
+	
+	//Getters and Setters
 	public Participant getRoot() {
 		return root;
 	}
