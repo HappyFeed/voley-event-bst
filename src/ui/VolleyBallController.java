@@ -125,6 +125,12 @@ public class VolleyBallController {
         	score.initStyle(StageStyle.DECORATED);
         	score.setContentText("Please introduce a number");
         	score.show();
+    	}catch(NullPointerException npe) {
+    		Alert score = new Alert(AlertType.ERROR);
+        	score.setTitle(" IV Copa Panamericana de Voleibol Masculino Sub-21");
+        	score.initStyle(StageStyle.DECORATED);
+        	score.setContentText("This spectador was not selected ass a oficial participant");
+        	score.show();
     	}
     	
     	
