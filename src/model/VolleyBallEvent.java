@@ -21,51 +21,7 @@ public class VolleyBallEvent {
 	public VolleyBallEvent() {
 		
 	}
-    public int retornarAltura() {
-        return  retornarAltura(root, 1);
-    }
-
-    private int retornarAltura(Participant reco, int nivel) {
-       int altura=0;
-    	if (reco != null) {
-            retornarAltura(reco.getLeft(), nivel + 1);
-            if (nivel > altura) {
-                altura = nivel;
-            }
-            retornarAltura(reco.getRigth(), nivel + 1);
-        }
-    	return altura;
-    }
-    public String imprimirNivel() {
-  
-
-        return imprimirNivel(root, 0);
-
-    }
-
-    private String imprimirNivel(Participant pivote, int nivel2) {
-    	int info=0;
-    	if (pivote != null) {
-            imprimirNivel(pivote.getRigth(), nivel2 + 1);
-            imprimirNivel(pivote.getLeft(), nivel2 + 1);
-            info=pivote.getId();
-        }
-    	return ""+info;
-    }
-
-    public void imprimirAlturaDeCadaNodo() {
-        imprimirAlturaDeCadaNodo(root, 1);
-
-    }
-
-    private void imprimirAlturaDeCadaNodo(Participant reco, int nivel) {
-        if (reco != null) {
-            System.out.println("Nodo contiene: " + reco.getId() + " y su altura es: " + nivel);
-            imprimirAlturaDeCadaNodo(reco.getLeft(), nivel + 1);
-            imprimirAlturaDeCadaNodo(reco.getRigth(), nivel + 1);
-        }
-    }
-	
+ 
 	//Spectators methods
 	public void addParticipantIntoTree(Participant p) {
 		addParticipantIntoTree(p, root);
@@ -99,6 +55,7 @@ public class VolleyBallEvent {
 		BufferedReader br = new BufferedReader(fileReader);
 		String line = br.readLine();
 		line = br.readLine();
+		int times=0;
 		while(line != null){
 			String[] parts = line.split(",");
 			URL url = new URL(parts[6]);
@@ -108,10 +65,11 @@ public class VolleyBallEvent {
 			Participant nParticipant = new Participant(Integer.parseInt(parts[0]),parts[1],parts[2],parts[3],parts[4],parts[5],img,parts[7]);
 			addParticipantIntoTree(nParticipant);
 			line = br.readLine();
+			times++;
 		}
 		fileReader.close();
 		br.close();
-		choiceAleatoryParticipants();
+		choiceAleatoryParticipants(times);
 		return PATH;
 	}
 	
@@ -143,13 +101,13 @@ public class VolleyBallEvent {
 	
 	
 	//Official participants methods
-	public void choiceAleatoryParticipants() {
-		for(int i=0;i<25;i++) {
-			int n=(int) (Math.random() * 50) + 1;
+	public void choiceAleatoryParticipants(int size) {
+		int m=(int)( size*0.5);
+		for(int i=0;i<m;i++) {
+			int n=(int) (Math.random() * size) + 1;
 			Participant s=searchSpectador(n);
 			addingOficialParticipants(s);
 		}
-		oficialParticipantsTree("China");
 	}
 	
 	public void addingOficialParticipants(Participant newOne){
