@@ -111,6 +111,7 @@ public class VolleyBallController {
         	score.show();
     	}
     	timeParticipant.setText(""+ (System.currentTimeMillis()-time));
+    	idParticipant.setText("");
     }
 
     @FXML
@@ -131,10 +132,9 @@ public class VolleyBallController {
         	score.initStyle(StageStyle.DECORATED);
         	score.setContentText("This spectador was not selected ass a oficial participant");
         	score.show();
-    	}
-    	
-    	
+    	}  	
     	timeSpectators.setText(""+ (System.currentTimeMillis()-time));
+    	idSpectators.setText("");
     }
     
     public void showDataInScreen(Participant p) {

@@ -14,7 +14,6 @@ public class VolleyBallEvent {
 	
 	private Participant root;
 	private Participant first;
-	private Participant oficialRoot;
 	
 	public static final String PATH = "data/data.csv";
 	
@@ -102,17 +101,36 @@ public class VolleyBallEvent {
 	
 	//Official participants methods
 	public void choiceAleatoryParticipants(int size) {
-		int m=(int)( size*0.5);
-		for(int i=0;i<m;i++) {
+		System.out.println(size+""+(size*0.5));
+		int[] p= new int[10];
+		for(int i=0;i<10;i++) {
 			int n=(int) (Math.random() * size) + 1;
-			Participant s=searchSpectador(n);
-			addingOficialParticipants(s);
+			if(i>0) {
+				if(notChoice(n,p)) {
+					Participant s=searchSpectador(n);
+					addingOficialParticipants(s);
+					System.out.println(n+" si lista "+i);
+					p[i]=n;
+				}
+			}else {
+				p[i]=n;
+			}
+
 		}
 	}
-	
+	public boolean notChoice(int n, int[]a) {
+		boolean flag=true;
+		for(int i=0;i<a.length;i++) {
+			if(n==a[i]) {
+				flag=false;
+			}
+		}
+		return flag;
+	}
 	public void addingOficialParticipants(Participant newOne){
 		if(first == null){
 			first = newOne;
+			System.out.println("null");
 		}else{
 			Participant current = first;
 			while(current.getNext() != null){
@@ -122,66 +140,25 @@ public class VolleyBallEvent {
 			Participant temp = current;
 			current = current.getNext();
 			current.setPrev(temp);
+			System.out.println("si");
 		}
 	}
-	
-	public void oficialParticipantsTree(String country) {
-		while(first!=null) {
-			if(first.getCountry().equalsIgnoreCase(country)) {
-				oficialParticipantsTree(first,oficialRoot);
+	public Participant searchOficialParticipant(int n) {
+		Participant current = first;
+		Participant returned = null;
+		boolean stop = false;
+		while(current != null && !stop) {
+			if(current.getId()==n) {
+				stop = true;
+				returned = current;
+			}else {
+					current = current.getNext();
 			}
-			first.getNext();
 		}
 		
+		return returned;
 	}
 	
-	private void oficialParticipantsTree(Participant p, Participant current) {
-		if(oficialRoot == null) {
-			oficialRoot = p;
-		}
-		else {
-			if(p.compareTo(current) <= 0) {
-				if(current.getLeft() == null) {
-					current.setLeft(p);
-				}else{
-					addParticipantIntoTree(p, current.getLeft());
-				}
-			} else{
-				if(current.getRigth() == null) {
-					current.setRigth(p);
-				} else {
-					addParticipantIntoTree(p, current.getRigth());
-				}
-			}
-			
-		}
-	}
-	
-    public Participant searchOficialParticipant(int id) {
-		Participant s= new Participant(id,"","","","","",null,"");
-		return searchOficialPartcipant(oficialRoot,s);
-    }
-	
-    private Participant searchOficialPartcipant(Participant current, Participant s) {
-		if(current!=null) {
-			if(s.compareTo(current)<0) {
-				if(current.getLeft()!=null){
-					return searchSpectador(current.getLeft(),s);
-				}else {
-					return searchSpectador(current.getRigth(), s);
-				}
-			}else if(s.compareTo(current)>0){
-				if(current.getRigth()!=null) {
-					return searchSpectador(current.getRigth(), s);
-				}else {
-					return searchSpectador(current.getLeft(), s);
-				}
-			}else {
-				return current;
-			}
-		}
-		return current;
-	}
 	
 	//Getters and Setters
 	public Participant getRoot() {
@@ -199,4 +176,5 @@ public class VolleyBallEvent {
 	public void setFirst(Participant first) {
 		this.first = first;
 	}
+
 }
